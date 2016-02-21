@@ -29,6 +29,8 @@ test('download', async (t) => {
 test('touch', async (t) => {
   var {binDir, opts} = t.context
   await steamcmd.download(opts)
+  // fix random EBUSY on Windows
+  await new Promise((resolve) => setTimeout(resolve, 200))
   await steamcmd.touch(opts)
   t.notThrows(() => {
     fs.statSync(path.join(binDir, 'public'))
