@@ -1,18 +1,31 @@
 import test from 'ava'
 import steamcmd from './'
 import fs from 'fs'
+import tempfile from 'tempfile'
+import mkdirp from 'mkdirp'
+import path from 'path'
+import del from 'del'
 
 test('download', async (t) => {
-  await steamcmd.download()
+  const binDirParent = tempfile('/')
+  mkdirp.sync(binDirParent)
+  const binDir = path.join(binDirParent, 'steamcmd_bin')
+  await steamcmd.download({binDir})
   t.notThrows(() => {
-    fs.statSync('steamcmd_bin')
+    fs.statSync(binDir)
   })
+  await del(binDirParent, {force: true})
 })
 
 test('touch', async (t) => {
-  await steamcmd.download()
-  await steamcmd.touch()
+  const binDirParent = tempfile('/')
+  mkdirp.sync(binDirParent)
+  const binDir = path.join(binDirParent, 'steamcmd_bin')
+  const opts = {binDir}
+  await steamcmd.download(opts)
+  await steamcmd.touch(opts)
   t.notThrows(() => {
-    fs.statSync('steamcmd_bin/appcache')
+    fs.statSync(path.join(binDir, 'public'))
   })
+  await del(binDirParent, {force: true})
 })
