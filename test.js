@@ -55,7 +55,6 @@ test('repeated calls to getAppInfo', async (t) => {
   await new Promise((resolve) => setTimeout(resolve, 200))
   await steamcmd.touch(opts)
   const csgoAppInfo = await steamcmd.getAppInfo(730, opts)
-  console.log(csgoAppInfo)
   t.is(csgoAppInfo.common.name, 'Counter-Strike: Global Offensive')
   t.notThrows(steamcmd.getAppInfo(730, opts))
 })
