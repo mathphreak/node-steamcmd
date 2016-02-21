@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Call steamcmd from node.js",
   "license": "MIT",
-  "repository": "mathphreak/steamcmd",
+  "repository": "mathphreak/node-steamcmd",
   "author": {
     "name": "Matt Horn",
     "email": "mathphreak@gmail.com",
