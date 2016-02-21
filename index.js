@@ -6,6 +6,7 @@ var path = require('path')
 var request = require('request')
 var child = require('child-process-promise')
 var fs = require('fs')
+var vdf = require('vdf')
 var _ = {}
 _.defaults = require('lodash.defaults')
 
@@ -95,7 +96,16 @@ var touch = function (opts) {
 var getAppInfo = function (appID, opts) {
   opts = _.defaults(opts, defaultOptions)
   // use app_update to force data to update
-  return run(['@ShutdownOnFailedCommand 0', 'login anonymous', 'app_info_print 120', 'force_install_dir ./4', 'app_update 4', 'app_info_print ' + appID], opts)
+  return run(['@ShutdownOnFailedCommand 0', 'login anonymous', 'app_info_print ' + appID, 'force_install_dir ./4', 'app_update 4', 'app_info_print ' + appID], opts)
+    .then(function (proc) {
+      // strip Windows line endings
+      var result = proc.stdout.replace('\r\n', '\n')
+      // drop everything before nonsense
+      result = result.substr(result.indexOf('"' + appID + '"'))
+      result = vdf.parse(result)
+      result = result[appID]
+      return result
+    })
 }
 
 module.exports = {}

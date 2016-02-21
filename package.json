@@ -27,7 +27,8 @@
     "pinkie-promise": "2.0.0",
     "request": "2.69.0",
     "tar": "2.2.1",
-    "unzip": "0.1.11"
+    "unzip": "0.1.11",
+    "vdf": "0.0.2"
   },
   "devDependencies": {
     "ava": "0.12.0",
