@@ -21,7 +21,23 @@ steamcmd.touch();
 
 ## API
 
-### steamcmd.download()
+### steamcmd.download([opts])
+Downloads steamcmd for the current OS into `opts.binDir`
+
+### steamcmd.touch([opts])
+Runs steamcmd from `opts.binDir` and then exits
+
+## Configuration
+
+All functions take an optional options parameter.
+
+#### binDir
+
+type: string  
+default: `path.join(__dirname, 'steamcmd_bin')`
+
+The directory to use when downloading and running `steamcmd` itself.
+Defaults to `steamcmd_bin` in the same directory where this package is installed.
 
 ## License
 
