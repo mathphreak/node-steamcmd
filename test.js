@@ -8,3 +8,11 @@ test('download', async (t) => {
     fs.statSync('steamcmd_bin')
   })
 })
+
+test('touch', async (t) => {
+  await steamcmd.download()
+  await steamcmd.touch()
+  t.notThrows(() => {
+    fs.statSync('steamcmd_bin/appcache')
+  })
+})

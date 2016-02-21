@@ -15,6 +15,8 @@ const steamcmd = require('steamcmd');
 
 steamcmd.download();
 //=> returns a Promise for downloading steamcmd locally
+steamcmd.touch();
+//=> returns a Promise for ensuring that steamcmd is updated and dependencies exist
 ```
 
 ## API
