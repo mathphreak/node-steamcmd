@@ -36,3 +36,14 @@ test('touch', async (t) => {
     fs.statSync(path.join(binDir, 'public'))
   })
 })
+
+test.only('getAppInfo', async (t) => {
+  var {opts} = t.context
+  await steamcmd.download(opts)
+  // fix random EBUSY on Windows
+  await new Promise((resolve) => setTimeout(resolve, 200))
+  await steamcmd.touch(opts)
+  const csgoAppInfo = await steamcmd.getAppInfo(730, opts)
+  console.log(csgoAppInfo)
+  t.is(csgoAppInfo.common.name, 'Counter-Strike: Global Offensive')
+})

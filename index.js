@@ -92,7 +92,14 @@ var touch = function (opts) {
   return run([], opts)
 }
 
+var getAppInfo = function (appID, opts) {
+  opts = _.defaults(opts, defaultOptions)
+  // use app_update to force data to update
+  return run(['@ShutdownOnFailedCommand 0', 'login anonymous', 'app_info_print 120', 'force_install_dir ./4', 'app_update 4', 'app_info_print ' + appID], opts)
+}
+
 module.exports = {}
 
 module.exports.download = downloadIfNeeded
 module.exports.touch = touch
+module.exports.getAppInfo = getAppInfo
