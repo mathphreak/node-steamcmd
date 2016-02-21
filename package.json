@@ -1,6 +1,6 @@
 {
   "name": "steamcmd",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Call steamcmd from node.js",
   "license": "MIT",
   "repository": "mathphreak/steamcmd",
