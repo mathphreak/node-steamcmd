@@ -20,10 +20,13 @@ var download = function () {
     return Promise.reject('Unsupported platform')
   }
   return new Promise(function (resolve, reject) {
-    request(url)
+    var req = request(url)
       .on('end', resolve)
       .on('error', reject)
-      .pipe(extractor.Extract({path: path.join(__dirname, 'steamcmd_bin')}))
+    if (process.platform !== 'win32') {
+      req = req.pipe(require('zlib').createGunzip())
+    }
+    req.pipe(extractor.Extract({path: path.join(__dirname, 'steamcmd_bin')}))
   })
 }
 
