@@ -1,6 +1,6 @@
 # steamcmd [![Build Status](https://travis-ci.org/mathphreak/node-steamcmd.svg?branch=master)](https://travis-ci.org/mathphreak/node-steamcmd)
 
-> My solid module
+> Call steamcmd from node.js
 
 ## Install
 
@@ -17,7 +17,9 @@ steamcmd.download();
 //=> returns a Promise for downloading steamcmd locally
 steamcmd.touch();
 //=> returns a Promise for ensuring that steamcmd is updated and dependencies exist
-steamcmd.getAppInfo(730)
+steamcmd.prep();
+//=> returns a Promise for downloading and updating steamcmd
+steamcmd.getAppInfo(730);
 //=> returns a Promise for the app info of appID 730
 ```
 
@@ -28,6 +30,9 @@ Downloads steamcmd for the current OS into `opts.binDir`
 
 ### steamcmd.touch([opts])
 Runs steamcmd and immediately exits
+
+### steamcmd.prep([opts])
+Downloads steamcmd and runs it
 
 ### steamcmd.getAppInfo(appid[, opts])
 Asks steamcmd to get the app info for the given app

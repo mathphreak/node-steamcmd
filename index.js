@@ -108,8 +108,22 @@ var getAppInfo = function (appID, opts) {
     })
 }
 
+var prep = function (opts) {
+  opts = _.defaults(opts, defaultOptions)
+  return downloadIfNeeded(opts)
+    .then(function () {
+      return new Promise(function (resolve) {
+        setTimeout(resolve, 500)
+      })
+    })
+    .then(function () {
+      return touch(opts)
+    })
+}
+
 module.exports = {}
 
 module.exports.download = downloadIfNeeded
 module.exports.touch = touch
+module.exports.prep = prep
 module.exports.getAppInfo = getAppInfo
