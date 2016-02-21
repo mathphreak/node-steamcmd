@@ -1,0 +1,39 @@
+{
+  "name": "steamcmd",
+  "version": "0.0.0",
+  "description": "My solid module",
+  "license": "MIT",
+  "repository": "mathphreak/steamcmd",
+  "author": {
+    "name": "Matt Horn",
+    "email": "mathphreak@gmail.com",
+    "url": "mathphreak.me"
+  },
+  "bin": "cli.js",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "xo && ava"
+  },
+  "files": [
+    "index.js"
+  ],
+  "keywords": [
+    "steamcmd"
+  ],
+  "dependencies": {
+    "request": "2.69.0",
+    "tar": "2.2.1",
+    "unzip": "0.1.11"
+  },
+  "devDependencies": {
+    "ava": "0.12.0",
+    "babel-eslint": "5.0.0",
+    "xo": "0.12.1"
+  },
+  "xo": {
+    "semicolon": false,
+    "space": 2
+  }
+}
