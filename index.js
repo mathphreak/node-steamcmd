@@ -115,7 +115,7 @@ var updateApp = function (appId, installDir, opts) {
     // throw an error immediately because it's invalid data, not a failure
     throw new TypeError('installDir must be an absolute path in updateApp')
   }
-  var commands = ['login anonymous', 'force_install_dir ' + installDir, 'app_update ' + appId]
+  var commands = ['@ShutdownOnFailedCommand 0', 'login anonymous', 'force_install_dir ' + installDir, 'app_update ' + appId]
   if (parseInt(appId, 10) === 90) {
     commands = commands.concat('app_update ' + appId)
   }
