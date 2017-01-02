@@ -109,6 +109,18 @@ var getAppInfo = function (appID, opts) {
     })
 }
 
+var updateApp = function (appId, installDir, opts) {
+  return run(['@ShutdownOnFailedCommand 0', 'login anonymous', 'force_install_dir ' + installDir, 'app_update ' + appId], opts)
+    .then(function (proc) {
+      if (proc.stdout.indexOf('Success! App ' + "'" + appId + "'" + ' fully installed') !== -1) {
+        return true;
+      }
+
+      var stdoutArray = proc.stdout.replace('\r\n', '\n').split('\n');
+      return Promise.reject('Unable to update ' + appId + '. \n SteamCmd error was ' + stdoutArray[stdoutArray.length - 2]);
+    });
+};
+
 var prep = function (opts) {
   opts = _.defaults(opts, defaultOptions)
   return downloadIfNeeded(opts)
@@ -128,3 +140,4 @@ module.exports.download = downloadIfNeeded
 module.exports.touch = touch
 module.exports.prep = prep
 module.exports.getAppInfo = getAppInfo
+module.exports.updateApp = updateApp
