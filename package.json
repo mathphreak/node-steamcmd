@@ -1,13 +1,13 @@
 {
   "name": "steamcmd",
   "version": "2.0.0",
-  "description": "Call steamcmd from node.js",
+  "description": "Call SteamCMD from node.js",
   "license": "MIT",
   "repository": "mathphreak/node-steamcmd",
   "author": {
     "name": "Matt Horn",
-    "email": "mathphreak@gmail.com",
-    "url": "mathphreak.me"
+    "email": "matt@matthorn.tech",
+    "url": "http://www.matthorn.tech"
   },
   "engines": {
     "node": ">=4.7.0"
@@ -19,7 +19,8 @@
     "index.js"
   ],
   "keywords": [
-    "steamcmd"
+    "steamcmd",
+    "steam"
   ],
   "dependencies": {
     "child-process-promise": "2.2.0",
