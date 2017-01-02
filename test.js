@@ -82,7 +82,7 @@ test('updateApp with a relative path', async t => {
   t.throws(() => fs.statSync('bad_steamworks'))
 })
 
-test.only('updateApp with a nonexistent app', async t => {
+test('updateApp with a nonexistent app', async t => {
   var {opts} = t.context
   await steamcmd.download(opts)
   // fix random EBUSY on Windows
