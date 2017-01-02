@@ -1,6 +1,6 @@
 {
   "name": "steamcmd",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Call steamcmd from node.js",
   "license": "MIT",
   "repository": "mathphreak/node-steamcmd",
@@ -10,7 +10,7 @@
     "url": "mathphreak.me"
   },
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=4.7.0"
   },
   "scripts": {
     "test": "xo && ava"
@@ -22,20 +22,20 @@
     "steamcmd"
   ],
   "dependencies": {
-    "child-process-promise": "1.1.0",
-    "lodash.defaults": "4.0.1",
-    "pinkie-promise": "2.0.0",
-    "request": "2.69.0",
+    "child-process-promise": "2.2.0",
+    "lodash.defaults": "4.2.0",
+    "pinkie-promise": "2.0.1",
+    "request": "2.79.0",
     "tar": "2.2.1",
     "unzip": "0.1.11",
     "vdf": "0.0.2"
   },
   "devDependencies": {
-    "ava": "0.12.0",
-    "del": "2.2.0",
+    "ava": "0.17.0",
+    "del": "2.2.2",
     "mkdirp": "0.5.1",
     "tempfile": "1.1.1",
-    "xo": "0.12.1"
+    "xo": "0.17.1"
   },
   "xo": {
     "semicolon": false,

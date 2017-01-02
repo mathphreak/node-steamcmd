@@ -1,12 +1,13 @@
 /* eslint new-cap: [2, {"capIsNewExceptions": ["extractor.Extract"]}] */
 'use strict'
 
-var Promise = require('pinkie-promise')
 var path = require('path')
+var fs = require('fs')
+var Promise = require('pinkie-promise')
 var request = require('request')
 var child = require('child-process-promise')
-var fs = require('fs')
 var vdf = require('vdf')
+
 var _ = {}
 _.defaults = require('lodash.defaults')
 
@@ -47,7 +48,7 @@ var downloadIfNeeded = function (opts) {
   try {
     fs.statSync(opts.binDir)
     return Promise.resolve()
-  } catch (e) {
+  } catch (err) {
     return download(opts)
   }
 }
