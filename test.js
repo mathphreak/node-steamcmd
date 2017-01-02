@@ -89,13 +89,6 @@ test('updateApp with a nonexistent app', async t => {
   await new Promise(resolve => setTimeout(resolve, 200))
   await steamcmd.touch(opts)
   t.throws(steamcmd.updateApp(4, path.resolve('test_data', 'nonexistent_app'), opts))
-  // fix random failure on Windows
-  await new Promise(resolve => setTimeout(resolve, 200))
-  console.log('test_data', fs.readdirSync('test_data'))
-  console.log('nonexistent_app', fs.readdirSync(path.resolve('test_data', 'nonexistent_app')))
-  console.log('steamapps', fs.readdirSync(path.resolve('test_data', 'nonexistent_app', 'steamapps')))
-  t.notThrows(() => fs.statSync(path.resolve('test_data', 'nonexistent_app', 'steamapps', 'libraryfolders.vdf')))
-  await new Promise(resolve => setTimeout(resolve, 200))
 })
 
 test('updateApp with valid parameters', async t => {
