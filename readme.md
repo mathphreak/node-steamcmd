@@ -1,6 +1,10 @@
-# steamcmd [![Build Status](https://travis-ci.org/mathphreak/node-steamcmd.svg?branch=master)](https://travis-ci.org/mathphreak/node-steamcmd)
+# steamcmd
 
-> Call steamcmd from node.js
+Call steamcmd from node.js
+
+[![npm](https://img.shields.io/npm/dt/steamcmd.svg?style=flat-square)](https://www.npmjs.com/package/steamcmd)
+[![AppVeyor](https://img.shields.io/appveyor/ci/mathphreak/node-steamcmd.svg?style=flat-square&label=Windows+build)](https://ci.appveyor.com/project/mathphreak/node-steamcmd)
+[![Travis](https://img.shields.io/travis/mathphreak/node-steamcmd.svg?style=flat-square&label=OS+X+%2F+Linux+build)](https://travis-ci.org/mathphreak/node-steamcmd)
 
 ## Install
 
