@@ -32,16 +32,20 @@ steamcmd.updateApp(90, path.resolve('hlds'));
 ## API
 
 ### steamcmd.download([opts])
-Downloads steamcmd for the current OS into `opts.binDir`
+Downloads SteamCMD for the current OS into `opts.binDir`
 
 ### steamcmd.touch([opts])
-Runs steamcmd and immediately exits
+Runs SteamCMD and immediately exits
 
 ### steamcmd.prep([opts])
-Downloads steamcmd and runs it
+Downloads SteamCMD and runs it
 
 ### steamcmd.getAppInfo(appid[, opts])
-Asks steamcmd to get the app info for the given app
+Asks SteamCMD to get the app info for the given app
+
+### steamcmd.updateApp(appid, installDir[, opts])
+Asks SteamCMD to install/update the given app to the given **ABSOLUTE** directory.
+Throws a TypeError if installDir is not absolute.
 
 ## Configuration
 
