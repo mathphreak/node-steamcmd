@@ -1,3 +1,4 @@
 node_modules
 steamcmd_bin/
 npm-debug.log
+test_data/
