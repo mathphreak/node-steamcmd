@@ -110,16 +110,25 @@ var getAppInfo = function (appID, opts) {
 }
 
 var updateApp = function (appId, installDir, opts) {
-  return run(['@ShutdownOnFailedCommand 0', 'login anonymous', 'force_install_dir ' + installDir, 'app_update ' + appId], opts)
+  opts = _.defaults(opts, defaultOptions)
+  if (!path.isAbsolute(installDir)) {
+    // throw an error immediately because it's invalid data, not a failure
+    throw new TypeError('installDir must be an absolute path in updateApp')
+  }
+  var commands = ['login anonymous', 'force_install_dir ' + installDir, 'app_update ' + appId]
+  if (parseInt(appId, 10) === 90) {
+    commands = commands.concat('app_update ' + appId)
+  }
+  return run(commands, opts)
     .then(function (proc) {
-      if (proc.stdout.indexOf('Success! App ' + "'" + appId + "'" + ' fully installed') !== -1) {
-        return true;
+      if (proc.stdout.indexOf('Success! App \'' + appId + '\' fully installed') !== -1) {
+        return true
       }
 
-      var stdoutArray = proc.stdout.replace('\r\n', '\n').split('\n');
-      return Promise.reject('Unable to update ' + appId + '. \n SteamCmd error was ' + stdoutArray[stdoutArray.length - 2]);
-    });
-};
+      var stdoutArray = proc.stdout.replace('\r\n', '\n').split('\n')
+      return Promise.reject(new Error('Unable to update ' + appId + '. \n SteamCMD error was ' + stdoutArray[stdoutArray.length - 2]))
+    })
+}
 
 var prep = function (opts) {
   opts = _.defaults(opts, defaultOptions)

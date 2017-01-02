@@ -25,6 +25,8 @@ steamcmd.prep();
 //=> returns a Promise for downloading and updating steamcmd
 steamcmd.getAppInfo(730);
 //=> returns a Promise for the app info of appID 730
+steamcmd.updateApp(90, path.resolve('hlds'));
+//=> returns a Promise for installing/updating the Half-Life Dedicated Server into 'hlds'
 ```
 
 ## API
