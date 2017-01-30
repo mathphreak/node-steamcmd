@@ -53,20 +53,14 @@ test('prep', async t => {
 
 test('getAppInfo', async t => {
   var {opts} = t.context
-  await steamcmd.download(opts)
-  // fix random EBUSY on Windows
-  await new Promise(resolve => setTimeout(resolve, 200))
-  await steamcmd.touch(opts)
+  await steamcmd.prep(opts)
   const csgoAppInfo = await steamcmd.getAppInfo(730, opts)
   t.is(csgoAppInfo.common.name, 'Counter-Strike: Global Offensive')
 })
 
 test('repeated calls to getAppInfo', async t => {
   var {opts} = t.context
-  await steamcmd.download(opts)
-  // fix random EBUSY on Windows
-  await new Promise(resolve => setTimeout(resolve, 200))
-  await steamcmd.touch(opts)
+  await steamcmd.prep(opts)
   const csgoAppInfo = await steamcmd.getAppInfo(730, opts)
   t.is(csgoAppInfo.common.name, 'Counter-Strike: Global Offensive')
   t.notThrows(steamcmd.getAppInfo(730, opts))
@@ -74,37 +68,25 @@ test('repeated calls to getAppInfo', async t => {
 
 test('updateApp with a relative path', async t => {
   var {opts} = t.context
-  await steamcmd.download(opts)
-  // fix random EBUSY on Windows
-  await new Promise(resolve => setTimeout(resolve, 200))
-  await steamcmd.touch(opts)
+  await steamcmd.prep(opts)
   t.throws(() => steamcmd.updateApp(1007, 'bad_steamworks', opts))
   t.throws(() => fs.statSync('bad_steamworks'))
 })
 
 test('updateApp with a nonexistent app', async t => {
   var {opts} = t.context
-  await steamcmd.download(opts)
-  // fix random EBUSY on Windows
-  await new Promise(resolve => setTimeout(resolve, 200))
-  await steamcmd.touch(opts)
+  await steamcmd.prep(opts)
   t.throws(steamcmd.updateApp(4, path.resolve('test_data', 'nonexistent_app'), opts))
 })
 
 test('updateApp with valid parameters', async t => {
   var {opts} = t.context
-  await steamcmd.download(opts)
-  // fix random EBUSY on Windows
-  await new Promise(resolve => setTimeout(resolve, 500))
-  await steamcmd.touch(opts)
+  await steamcmd.prep(opts)
   t.true(await steamcmd.updateApp(1007, path.resolve('test_data', 'steamworks'), opts))
 })
 
 test('updateApp with HLDS workaround', async t => {
   var {opts} = t.context
-  await steamcmd.download(opts)
-  // fix random EBUSY on Windows
-  await new Promise(resolve => setTimeout(resolve, 500))
-  await steamcmd.touch(opts)
+  await steamcmd.prep(opts)
   t.true(await steamcmd.updateApp(90, path.resolve('test_data', 'hlds'), opts))
 })
