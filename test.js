@@ -108,3 +108,12 @@ test('updateApp with HLDS workaround', async t => {
   await steamcmd.touch(opts)
   t.true(await steamcmd.updateApp(90, path.resolve('test_data', 'hlds'), opts))
 })
+
+test('updateApp on already up-to-date app returns false', async t => {
+  var {binDirParent, opts} = t.context
+  const appId = 1007
+  const installDir = path.join(binDirParent, 'app')
+  await steamcmd.prep(opts)
+  await steamcmd.updateApp(appId, installDir, opts)
+  t.false(await steamcmd.updateApp(appId, installDir, opts))
+})
