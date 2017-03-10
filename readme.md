@@ -63,7 +63,7 @@ All functions take an optional options parameter.
 
 #### binDir
 
-type: string  
+type: string
 default: `path.join(__dirname, 'steamcmd_bin')`
 
 The directory to use when downloading and running `steamcmd` itself.
@@ -79,4 +79,4 @@ programs while running the tests.
 
 ## License
 
-MIT © [Matt Horn](http://mathphreak.me)
+MIT © [Matt Horn](http://www.matthorn.tech)
