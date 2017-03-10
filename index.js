@@ -124,6 +124,9 @@ var updateApp = function (appId, installDir, opts) {
       if (proc.stdout.indexOf('Success! App \'' + appId + '\' fully installed') !== -1) {
         return true
       }
+      if (proc.stdout.indexOf('Success! App \'' + appId + '\' already up to date.') !== -1) {
+        return false
+      }
 
       var stdoutArray = proc.stdout.replace('\r\n', '\n').split('\n')
       return Promise.reject(new Error('Unable to update ' + appId + '. \n SteamCMD error was ' + stdoutArray[stdoutArray.length - 2]))
