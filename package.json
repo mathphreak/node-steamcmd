@@ -26,13 +26,13 @@
     "child-process-promise": "2.2.0",
     "lodash.defaults": "4.2.0",
     "pinkie-promise": "2.0.1",
-    "request": "2.79.0",
+    "request": "2.81.0",
     "tar": "2.2.1",
     "unzip": "0.1.11",
     "vdf": "0.0.2"
   },
   "devDependencies": {
-    "ava": "0.17.0",
+    "ava": "0.18.2",
     "del": "2.2.2",
     "mkdirp": "0.5.1",
     "tempfile": "1.1.1",
