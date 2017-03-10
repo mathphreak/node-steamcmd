@@ -12,6 +12,12 @@ Call SteamCMD from node.js
 $ npm install --save steamcmd
 ```
 
+SteamCMD works faster if all its [required ports]
+(https://support.steampowered.com/kb_article.php?ref=8571-GLVN-8711)
+are available:
+* UDP 27015 through 27030
+* TCP 27015 through 27030
+
 ## Usage
 
 ```js
@@ -33,19 +39,23 @@ steamcmd.updateApp(90, path.resolve('hlds'));
 
 ### steamcmd.download([opts])
 Downloads SteamCMD for the current OS into `opts.binDir`
+unless `opts.binDir` already exists and is accessible.
 
 ### steamcmd.touch([opts])
-Runs SteamCMD and immediately exits
+Ensures SteamCMD is usable by running it with no arguments and exiting.
 
 ### steamcmd.prep([opts])
-Downloads SteamCMD and runs it
+Runs `download([opts])`, waits briefly to avoid `EBUSY`, then runs
+`touch([opts])`.
 
 ### steamcmd.getAppInfo(appid[, opts])
-Asks SteamCMD to get the app info for the given app
+Asks SteamCMD to get the latest app info for the given app.
 
 ### steamcmd.updateApp(appid, installDir[, opts])
-Asks SteamCMD to install/update the given app to the given **ABSOLUTE** directory.
-Throws a TypeError if installDir is not absolute.
+Asks SteamCMD to install/update the given app to the given **absolute**
+directory. Throws a `TypeError` if `installDir` is not absolute.
+Returns `true` if the update succeeded or `false` if it wasn't required.
+If SteamCMD's stdout isn't recognized, throws it as an error.
 
 ## Configuration
 
@@ -58,6 +68,14 @@ default: `path.join(__dirname, 'steamcmd_bin')`
 
 The directory to use when downloading and running `steamcmd` itself.
 Defaults to `steamcmd_bin` in the same directory where this package is installed.
+
+## Testing
+
+The tests run in parallel and do a significant amount of downloading and IO.
+If you're running programs that scan downloaded files, like anti-virus or
+anti-malware (e.g. Windows Defender Realtime Protection), the test processes
+may run very slowly or be blocked with `EBUSY`. Try temporarily disabling such
+programs while running the tests.
 
 ## License
 
