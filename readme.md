@@ -12,8 +12,7 @@ Call SteamCMD from node.js
 $ npm install --save steamcmd
 ```
 
-SteamCMD works faster if all its [required ports]
-(https://support.steampowered.com/kb_article.php?ref=8571-GLVN-8711)
+SteamCMD works faster if all its [required ports](https://support.steampowered.com/kb_article.php?ref=8571-GLVN-8711)
 are available:
 * UDP 27015 through 27030
 * TCP 27015 through 27030
