@@ -1,6 +1,6 @@
 # steamcmd
 
-Call SteamCMD from node.js
+Call SteamCMD from Node.js
 
 [![npm](https://img.shields.io/npm/dt/steamcmd.svg?style=flat-square)](https://www.npmjs.com/package/steamcmd)
 [![AppVeyor](https://img.shields.io/appveyor/ci/mathphreak/node-steamcmd.svg?style=flat-square&label=Windows+build)](https://ci.appveyor.com/project/mathphreak/node-steamcmd)
