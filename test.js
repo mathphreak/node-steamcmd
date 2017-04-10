@@ -68,6 +68,21 @@ test('repeated calls to getAppInfo', async t => {
   t.notThrows(steamcmd.getAppInfo(730, opts))
 })
 
+test('getAppVersionRemote', async t => {
+  var {opts} = t.context
+  await steamcmd.prep(opts)
+  // main branch
+  let info = await steamcmd.getAppVersionRemote(730, '', opts)
+  t.regex(info.buildId, /\d+/)
+  t.falsy(info.description)
+  t.true(info.updatedAt && new Date(0) < info.updatedAt)
+  // different branch
+  info = await steamcmd.getAppVersionRemote(730, '1.21.3.1', opts)
+  t.is(info.buildId, '611429')
+  t.is(info.description, 'Game version 1.21.3.1 (16-Nov-2012)')
+  t.falsy(info.updatedAt)
+})
+
 test('updateApp with a relative path', async t => {
   var {opts} = t.context
   await steamcmd.prep(opts)

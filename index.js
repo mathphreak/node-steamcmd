@@ -132,6 +132,19 @@ var getAppInfo = function (appID, opts) {
     })
 }
 
+var getAppVersionRemote = function (appId, branchId, opts) {
+  return getAppInfo(appId, opts).then(function (appInfo) {
+    branchId = branchId || 'public'
+    var branch = appInfo.depots.branches[branchId]
+    return {
+      buildId: branch.buildid,
+      description: branch.description,
+      updatedAt: branch.timeupdated ?
+        new Date(parseInt(branch.timeupdated, 10) * 1000) : undefined
+    }
+  })
+}
+
 var updateApp = function (appId, installDir, opts) {
   opts = _.defaults(opts, defaultOptions)
   if (!path.isAbsolute(installDir)) {
@@ -175,4 +188,5 @@ module.exports.download = downloadIfNeeded
 module.exports.touch = touch
 module.exports.prep = prep
 module.exports.getAppInfo = getAppInfo
+module.exports.getAppVersionRemote = getAppVersionRemote
 module.exports.updateApp = updateApp
