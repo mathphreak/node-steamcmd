@@ -56,6 +56,8 @@ test('getAppInfo', async t => {
   await steamcmd.prep(opts)
   const csgoAppInfo = await steamcmd.getAppInfo(730, opts)
   t.is(csgoAppInfo.common.name, 'Counter-Strike: Global Offensive')
+  // Ensure the whole text is parsed by checking the last element
+  t.truthy(csgoAppInfo.ufs)
 })
 
 test('repeated calls to getAppInfo', async t => {
