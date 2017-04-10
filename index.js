@@ -96,16 +96,39 @@ var touch = function (opts) {
 
 var getAppInfo = function (appID, opts) {
   opts = _.defaults(opts, defaultOptions)
-  // use app_update to force data to update
-  return run(['@ShutdownOnFailedCommand 0', 'login anonymous', 'app_info_print ' + appID, 'force_install_dir ./4', 'app_update 4', 'app_info_print ' + appID], opts)
+
+  // The first call to app_info_print from a new install will return nothing,
+  // and it will instead prep an entry for the info and request it.
+  // It won't block though, and if the session closes before it can save,
+  // the same issue will be present on next run.
+  // Thus we use `app_update` to force the session to wait long enough to save.
+  var forceInfoCommand = [
+    '@ShutdownOnFailedCommand 0', 'login anonymous',
+    'app_info_print ' + appID,
+    'force_install_dir ./4', 'app_update 4'
+  ]
+
+  // The output from app_update can collide with that of app_info_print,
+  // so after ensuring the info is available we must re-run without app_update.
+  var fetchInfoCommand = [
+    '@ShutdownOnFailedCommand 0', 'login anonymous',
+    'app_info_update 1', // force data update
+    'app_info_print ' + appID,
+    'find e' // fill the buffer so info's not truncated on Windows
+  ]
+
+  return run(forceInfoCommand, opts) // @todo only force when needed
+    .then(function () {
+      return run(fetchInfoCommand, opts)
+    })
     .then(function (proc) {
       // strip Windows line endings
-      var result = proc.stdout.replace('\r\n', '\n')
-      // drop everything before nonsense
-      result = result.substr(result.indexOf('"' + appID + '"'))
-      result = vdf.parse(result)
-      result = result[appID]
-      return result
+      var stdout = proc.stdout.replace('\r\n', '\n')
+      // extract & parse info
+      var infoTextStart = stdout.indexOf('"' + appID + '"')
+      var infoTextEnd = stdout.indexOf('ConVars:')
+      var infoText = stdout.substr(infoTextStart, infoTextEnd - infoTextStart)
+      return vdf.parse(infoText)[appID]
     })
 }
 
