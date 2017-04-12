@@ -147,7 +147,11 @@ var getAppInfo = function (appID, opts) {
         throw new TypeError('getAppInfo() failed to receive expected data.')
       }
       var infoText = stdout.substr(infoTextStart, infoTextEnd - infoTextStart)
-      return vdf.parse(infoText)[appID]
+      var result = vdf.parse(infoText)[appID]
+      if (result === {}) {
+        throw new TypeError('getAppInfo() received empty app data.')
+      }
+      return result
     })
 }
 
