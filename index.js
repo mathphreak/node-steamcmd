@@ -4,8 +4,9 @@
 var path = require('path')
 var fs = require('fs')
 var Promise = require('pinkie-promise')
+var pty = require('node-pty')
+var stripAnsi = require('strip-ansi')
 var request = require('request')
-var child = require('child-process-promise')
 var vdf = require('vdf')
 
 var _ = {}
@@ -53,39 +54,72 @@ var downloadIfNeeded = function (opts) {
   }
 }
 
+// Returns a Promise that runs the supplied SteamCMD commands.
+// Resolves or rejects depending on exit code,
+// passing an object containing the resulting stdout and exit code.
 var run = function (commands, opts) {
   opts = _.defaults(opts, defaultOptions)
   var exeName
+  var shellName
+  var echoExitCode
   if (process.platform === 'win32') {
     exeName = 'steamcmd.exe'
-  } else if (process.platform === 'darwin') {
+    shellName = 'powershell.exe'
+    echoExitCode = 'echo $lastexitcode'
+  } else if (process.platform === 'darwin' || process.platform === 'linux') {
     exeName = 'steamcmd.sh'
-  } else if (process.platform === 'linux') {
-    exeName = 'steamcmd.sh'
+    shellName = 'bash'
+    echoExitCode = 'echo $?'
   } else {
     return Promise.reject('Unsupported platform')
   }
-  var args = commands.concat('quit').map(function (x) {
-    return '+' + x
-  }).join(' ').split(' ')
+  var exePath = path.join(opts.binDir, exeName)
+  commands = [exePath].concat(commands).concat(['quit', echoExitCode, 'exit'])
+
   return new Promise(function (resolve, reject) {
-    child.spawn(path.join(opts.binDir, exeName),
-      args,
-      {
-        capture: ['stdout', 'stderr'],
-        cwd: opts.binDir
+    var ptyProcess = pty.spawn(shellName, [], {
+      cols: 120,
+      rows: 30,
+      cwd: process.env.HOME,
+      env: process.env // @todo restrict env if possible, fails when empty
+    })
+
+    var stdout = ''
+    ptyProcess.on('data', function (data) {
+      stdout += stripAnsi(data)
+    })
+
+    ptyProcess.on('exit', function (code) {
+      if (process.platform === 'win32') {
+        // Exit code not available through event data on Windows
+        // https://github.com/Tyriar/node-pty/issues/75
+        code = stdout.substr(stdout.indexOf(echoExitCode)).match(/(-?\d+)/)[0]
+        code = parseInt(code, 10)
       }
-    ).then(function (x) {
-      resolve(x)
-    }).fail(function (x) {
-      // For some reason, steamcmd will occasionally exit with code 7 and be fine.
-      // This usually happens the first time touch() is called after download().
-      if (x.code === 7) {
-        resolve(x)
+      var result = {code: code, stdout: stdout}
+      if (code === 0 || code === 7) {
+        // Steamcmd will occasionally exit with code 7 and be fine.
+        // This usually happens the first run() after download().
+        resolve(result)
       } else {
-        reject(x)
+        reject(result)
       }
     })
+
+    function processCommandChain() {
+      if (commands.length > 0) {
+        var command = commands.shift()
+        if (command === 'wait') {
+          // Waits for steam to complete asynchronous actions
+          setTimeout(processCommandChain, 10000)
+        } else {
+          ptyProcess.write(command + '\r')
+          // Wait a little while or steam won't accept the commands
+          setTimeout(processCommandChain, 1000)
+        }
+      }
+    }
+    processCommandChain()
   })
 }
 
@@ -96,37 +130,22 @@ var touch = function (opts) {
 
 var getAppInfo = function (appID, opts) {
   opts = _.defaults(opts, defaultOptions)
-
-  // The first call to app_info_print from a new install will return nothing,
-  // and it will instead prep an entry for the info and request it.
-  // It won't block though, and if the session closes before it can save,
-  // the same issue will be present on next run.
-  // Thus we use `app_update` to force the session to wait long enough to save.
-  var forceInfoCommand = [
-    '@ShutdownOnFailedCommand 0', 'login anonymous',
-    'app_info_print ' + appID,
-    'force_install_dir ./4', 'app_update 4'
+  var command = [
+    'login anonymous',
+    'app_info_request ' + appID,
+    'wait',
+    'app_info_print ' + appID
   ]
-
-  // The output from app_update can collide with that of app_info_print,
-  // so after ensuring the info is available we must re-run without app_update.
-  var fetchInfoCommand = [
-    '@ShutdownOnFailedCommand 0', 'login anonymous',
-    'app_info_update 1', // force data update
-    'app_info_print ' + appID,
-    'find e' // fill the buffer so info's not truncated on Windows
-  ]
-
-  return run(forceInfoCommand, opts) // @todo only force when needed
-    .then(function () {
-      return run(fetchInfoCommand, opts)
-    })
+  return run(command, opts)
     .then(function (proc) {
       // strip Windows line endings
       var stdout = proc.stdout.replace('\r\n', '\n')
       // extract & parse info
       var infoTextStart = stdout.indexOf('"' + appID + '"')
-      var infoTextEnd = stdout.indexOf('ConVars:')
+      var infoTextEnd = stdout.indexOf('Steam>quit')
+      if (infoTextStart === -1 || infoTextEnd === -1) {
+        throw new TypeError('getAppInfo() failed to receive expected data.')
+      }
       var infoText = stdout.substr(infoTextStart, infoTextEnd - infoTextStart)
       return vdf.parse(infoText)[appID]
     })
