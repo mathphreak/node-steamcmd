@@ -13,7 +13,33 @@ var _ = {}
 _.defaults = require('lodash.defaults')
 
 var defaultOptions = {
-  binDir: path.join(__dirname, 'steamcmd_bin')
+  asyncDelay: 3000,
+  binDir: path.join(__dirname, 'steamcmd_bin'),
+  retries: 3,
+  retryDelay: 3000
+}
+
+// Returns a promise that resolves after ms milliseconds
+var promiseToWait = function (ms) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, ms)
+  })
+}
+
+// Takes a func that returns a promise and a set of args to pass it.
+// Returns the promise chained with retries and retry delays.
+var promiseToRetry = function (func, args, opts) {
+  opts = _.defaults(opts, defaultOptions)
+  var result = func.apply(this, args)
+  for (var i = 0; i < opts.retries; i++) {
+    result = result.catch(function () {
+      return promiseToWait(opts.retryDelay).then(function () {
+        return func.apply(this, args)
+      })
+    })
+  }
+
+  return result
 }
 
 var download = function (opts) {
@@ -111,7 +137,7 @@ var run = function (commands, opts) {
         var command = commands.shift()
         if (command === 'wait') {
           // Waits for steam to complete asynchronous actions
-          setTimeout(processCommandChain, 10000)
+          setTimeout(processCommandChain, opts.asyncDelay)
         } else {
           ptyProcess.write(command + '\r')
           // Wait a little while or steam won't accept the commands
@@ -128,7 +154,7 @@ var touch = function (opts) {
   return run([], opts)
 }
 
-var getAppInfo = function (appID, opts) {
+var getAppInfoOnce = function (appID, opts) {
   opts = _.defaults(opts, defaultOptions)
   var command = [
     'login anonymous',
@@ -148,23 +174,24 @@ var getAppInfo = function (appID, opts) {
       }
       var infoText = stdout.substr(infoTextStart, infoTextEnd - infoTextStart)
       var result = vdf.parse(infoText)[appID]
-      if (result === {}) {
+      if (Object.keys(result).length === 0) {
         throw new TypeError('getAppInfo() received empty app data.')
       }
       return result
     })
 }
 
-var updateApp = function (appId, installDir, opts) {
+var getAppInfo = function (appID, opts) {
+  return promiseToRetry(getAppInfoOnce, [appID, opts], opts)
+}
+
+var updateAppOnce = function (appId, installDir, opts) {
   opts = _.defaults(opts, defaultOptions)
   if (!path.isAbsolute(installDir)) {
     // throw an error immediately because it's invalid data, not a failure
     throw new TypeError('installDir must be an absolute path in updateApp')
   }
   var commands = ['@ShutdownOnFailedCommand 0', 'login anonymous', 'force_install_dir ' + installDir, 'app_update ' + appId]
-  if (parseInt(appId, 10) === 90) {
-    commands = commands.concat('app_update ' + appId)
-  }
   return run(commands, opts)
     .then(function (proc) {
       if (proc.stdout.indexOf('Success! App \'' + appId + '\' fully installed') !== -1) {
@@ -177,6 +204,10 @@ var updateApp = function (appId, installDir, opts) {
       var stdoutArray = proc.stdout.replace('\r\n', '\n').split('\n')
       return Promise.reject(new Error('Unable to update ' + appId + '. \n SteamCMD error was ' + stdoutArray[stdoutArray.length - 2]))
     })
+}
+
+var updateApp = function (appId, installDir, opts) {
+  return promiseToRetry(updateAppOnce, [appId, installDir, opts], opts)
 }
 
 var prep = function (opts) {

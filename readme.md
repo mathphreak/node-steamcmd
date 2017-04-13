@@ -60,6 +60,15 @@ If SteamCMD's stdout isn't recognized, throws it as an error.
 
 All functions take an optional options parameter.
 
+#### asyncDelay
+
+type: int
+default: `3000`
+
+The number of milliseconds to wait for steam to complete asynchronous tasks
+before closing the terminal. Not waiting long enough can cause it to fail to
+store the results of requests.
+
 #### binDir
 
 type: string
@@ -67,6 +76,23 @@ default: `path.join(__dirname, 'steamcmd_bin')`
 
 The directory to use when downloading and running `steamcmd` itself.
 Defaults to `steamcmd_bin` in the same directory where this package is installed.
+
+#### retries
+
+type: int
+default: `3`
+
+The number of times to re-attempt commands that are known to occasionally fail
+due to issues with SteamCMD. `3` should be sufficient for most purposes, but
+certain apps occasionally require additional attempts (HLDS, Rust).
+
+#### retryDelay
+
+type: int
+default: `3000`
+
+The number of milliseconds to wait between re-attempt commands. Retrying too
+quickly can cause Steam's `memstd.cpp` to emit out of memory errors.
 
 ## Testing
 
