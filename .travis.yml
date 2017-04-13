@@ -1,6 +1,5 @@
 language: node_js
 os:
-  - linux
   - osx
 node_js:
   - '7'
@@ -12,5 +11,22 @@ cache:
     - node_modules
 addons:
   apt:
+    sources:
+      - ubuntu-toolchain-r-test
     packages:
+      - g++-4.8
       - lib32gcc1
+matrix:
+  include:
+    - os: linux
+      env: CXX=g++-4.8
+      node_js: '7'
+    - os: linux
+      env: CXX=g++-4.8
+      node_js: '6'
+    - os: linux
+      env: CXX=g++-4.8
+      node_js: '5'
+    - os: linux
+      env: CXX=g++-4.8
+      node_js: '4'
